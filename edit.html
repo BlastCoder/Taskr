@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Edit Note</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='w3.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='roboto.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/font-awesome.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+</style>
+</head>
+<body class="w3-light-grey">
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:800px;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+
+    <!-- Left Column -->
+    <div class="w3-half">
+    
+      <div class="w3-white w3-text-grey w3-card-4">
+        <div class="w3-container">
+          <h3 class="w3-padding-16"><i class="fa fa-pencil fa-fw w3-margin-right w3-xxlarge w3-text-teal"></i>Edit Note</h3>
+          <form class="w3-container" method="POST" action="/edit/{{ note_id }}">
+            <label class="w3-text-teal"><b>Title</b></label>
+            <input class="w3-input w3-border w3-light-grey" type="text" name="title" value="{{ note.title }}">
+            
+            <label class="w3-text-teal"><b>Content</b></label>
+            <textarea class="w3-input w3-border w3-light-grey" name="content" rows="5">{{ note.content }}</textarea>
+            
+            <label class="w3-text-teal"><b>Tags</b></label>
+            <input class="w3-input w3-border w3-light-grey" type="text" name="tags" value="{{ note.tags }}">
+            
+            <div class="form-group">
+              <label class="w3-text-teal"><b>Color</b></label>
+              <select class="form-control" id="color" name="color" value="000000" style="font-size:20px">
+                <option value="#000000">Black</option>
+                <option value="#ad6665">Red</option>
+                <option value="#8dbf82">Green</option>
+                <option value="#8a92d4">Blue</option>
+              </select>
+            </div>
+            
+            <label class="w3-text-teal"><b>Reminder</b></label>
+            <input class="w3-input w3-border w3-light-grey" type="datetime-local" name="reminder" value="{{ note.reminder }}">
+            <br>
+            <div>
+                {% if note.flashcard %}
+                <label class="w3-text-teal"for="flashcard"><b>Flashcard:</b></label>
+                <input class="w3-border we-light-grey" type="checkbox" id="flasjcard" name="flashcard" checked>
+                {% else %}
+                <label class="w3-text-teal"for="flashcard"><b>Flashcard:</b></label>
+                <input class="w3-border we-light-grey" type="checkbox" id="flasjcard" name="flashcard">
+                {% endif %}
+            </div>
+            <button class="w3-btn w3-teal w3-margin-top"><i class="fa fa-save"></i> Save</button>
+          </form>
+        </div>
+      </div><br>
+
+    <!-- End Left Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+  <!-- End Page Container -->
+</div>
+
+</body>
+</html>

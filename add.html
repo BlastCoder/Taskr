@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Note</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='w3.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='roboto.css') }}">
+    <style>
+        .color-preview {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+        }
+    </style>
+</head>
+<body class="w3-light-grey">
+    <div class="w3-container container">
+        <h1>Add Note</h1>
+        <form method="POST" action="{{ url_for('add_note') }}" class="w3-card-4 w3-padding" onsubmit="return confirmCancel()">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" class="w3-input w3-border w3-round"><br>
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" required class="w3-input w3-border w3-round" oninput="this.setCustomValidity('')" oninvalid="this.setCustomValidity('Please enter content')" onkeydown="if(event.keyCode == 13){this.value += '\n'; return false;}"></textarea><br>
+            <label for="tags">Tags:</label>
+            <input type="text" id="tags" name="tags" class="w3-input w3-border w3-round"><br>
+            <label for="color">Color:</label>
+            <select class="w3-select w3-border w3-round" id="color" name="color" value="#000000">
+                <option value="#000000">Black</option>
+                <option value="#ad6665">Red</option>
+                <option value="#8dbf82">Green</option>
+                <option value="#8a92d4">Blue</option>
+            </select>
+            <br><br>
+            <input type="hidden" id="color-preview" name="color-preview">
+            <div>
+                <label for="flashcard">Flashcard:</label>
+                <input type="checkbox" id="flasjcard" name="flashcard">
+            </div>
+            <br>
+            <input type="submit" value="Add" class="w3-btn w3-blue w3-round">
+            <input type="button" value="Cancel" onclick="cancelNote()" class="w3-btn w3-red w3-round">
+        </form>
+    </div>
+
+    <script>
+        // Get the color input element
+        var colorInput = document.getElementById('color');
+        // Get the color preview element
+        var colorPreview = document.getElementById('color-preview');
+
+        // Update the color preview when the color input changes
+        colorInput.addEventListener('input', function() {
+            colorPreview.style.backgroundColor = colorInput.value;
+            document.getElementById('color-preview').value = colorInput.value;
+        });
+        // Function to cancel the note and navigate back to the home page
+        function cancelNote() {
+            var contentInput = document.getElementById('content');
+            if (contentInput.value.trim().length > 0) {
+                if (confirm('Are you sure you want to go back? Your typed content will be lost.')) {
+                    window.location.href = '{{ url_for("index") }}';
+                }
+            } else {
+                window.location.href = '{{ url_for("index") }}';
+            }
+        }
+    </script>
+</body>
+</html>

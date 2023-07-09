@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Taskr</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='w3.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='roboto.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+.note-content {
+  color: inherit;
+}
+.note-content {
+  white-space: pre-wrap;
+  font-family: "Roboto", sans-serif;
+}
+</style>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="w3-light-grey">
+
+<header class="w3-container w3-blue w3-center w3-margin-top">
+  <a href="{{ url_for('index') }}" class="w3-btn w3-blue" style="font-size: 36px">Taskr</a>
+  <a href="/flash" class="w3-btn w3-blue" style="font-size: 36px">Flashr</a>
+  <a href="/notes" class="w3-btn w3-blue" style="font-size: 36px">Notes</a>
+  <br>
+  <div class="w3-container w3-padding">
+    <div class="w3-row">
+        <div class="w3-col m4 w3-center">
+            <a href="{{ url_for('add_section', notebook=selected_notebook) }}" class="w3-btn w3-blue"><i class="fa fa-plus"></i> Add Section</a>
+        </div>
+        <div class="w3-col m4 w3-center">
+            <a href="{{ url_for('delete_section', notebook=selected_notebook, sel_index=selected_chapter_index) }}" class="w3-btn w3-blue"><i class="fa fa-plus"></i> Delete Section</a>        
+        </div>
+        <div class="w3-col m4 w3-center">
+            <a href="{{ url_for('add_notebook')}}" class="w3-btn w3-blue"><i class="fa fa-plus"></i> Add Notebook</a>        
+        </div>
+    </div>
+  </div>
+
+</header>
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third margin-bottom">
+      <div class="w3-white w3-text-grey w3-card-4 margin-bottom">
+        <div class="w3-container margin-bottom">
+          <h3 style="margin-top:20px">Chapters</h3>
+          <ul class="w3-ul w3-hoverable">
+            {% for notebook in notebooks %}
+              {% if selected_notebook == notebook.title %}
+                <li class="w3-blue"><a href="{{ url_for('show_notebook', notebook=notebook.title) }}" style="text-decoration: none;">{{ notebook.title }}</a></li>
+              {% else %}
+                <li class="w3-padding w3-grey"><a href="{{ url_for('show_notebook', notebook=notebook.title) }}" style="text-decoration: none;">{{ notebook.title }}</a></li>
+              {% endif %}
+              {% if selected_notebook == notebook.title %}
+                  {% for chapter in notebook.chapters %}
+                    {% if selected_chapter == chapter.title %}
+                        <li class="w3-padding w3-light-blue selected-chapter"><a href="{{ url_for('show_chapter', notebook=notebook.title, chapter=chapter.title) }}" style="text-decoration: none;">{{ chapter.title }}</a></li>
+                    {% else %}
+                      <li class="w3-padding"><a href="{{ url_for('show_chapter', notebook=notebook.title, chapter=chapter.title) }}" style="text-decoration: none;">{{ chapter.title }}</a></li>
+                    {% endif %}
+                  {% endfor %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    <!-- End Left Column -->
+    </div>
+
+    <!-- Right Column -->
+    <div class="w3-twothird">
+    
+      <div class="w3-container w3-card w3-white w3-margin-bottom">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa-solid fa-note-sticky fa-fw w3-margin-right w3-xxlarge w3-text-blue"></i>Notebook</h2>
+        {% if selected_chapter and selected_notebook %}
+          <div class="w3-container w3-card w3-white w3-margin-bottom">
+            <h5 class="w3-opacity"><b>{{ selected_chapter }}</b></h5>
+            <textarea id="data-field" class="note-content" style="white-space: pre-wrap; width: 100%; height: auto; border: none; resize: none;">{{ chapters[selected_chapter_index]["content"] }}</textarea>
+            <hr>
+          </div>
+        {% elif selected_notebook %}
+          {% set chapters = notebooks[selected_notebook] %}
+          {% for chapter in chapters %}
+          <div class="w3-container w3-card w3-white w3-margin-bottom">
+            <h5 class="w3-opacity"><b>{{ chapter.title }}</b></h5>
+            <textarea class="note-content no-border no-resize" style="width: 100%; height: auto; border: none; resize: none;" readonly>{{ chapter.content }}</textarea>
+            <hr>
+          </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+  <!-- End Page Container -->
+</div>
+
+<footer class="w3-container w3-teal w3-center w3-margin-top">
+</footer>
+
+<script>
+  // Function to update the JSON file
+  function updateJSON() {
+    console.log('updateJSON function called.'); // Check if the function is triggered
+
+    var data = document.getElementById('data-field').value;
+    var selectedChapterIndex = "{{ selected_chapter_index }}";
+    var selectedNotebook = "{{ selected_notebook }}";
+    var selectedChapter = "{{ selected_chapter }}";
+
+    console.log('Sending AJAX request...'); 
+
+    // Send AJAX request to the Flask endpoint
+    $.ajax({
+      url: '/notes_update',
+      method: 'POST',
+      data: {
+        data: data,
+        selected_chapter_index: selectedChapterIndex,
+        selected_notebook: selectedNotebook,
+        selected_chapter: selectedChapter
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+      }
+    });
+  }
+
+  // Add event listener for input event on the textarea
+  document.getElementById('data-field').addEventListener('input', updateJSON);
+</script>
+
+
+
+
+</body>
+</html>
+
