@@ -404,6 +404,28 @@ def add_notebook():
         json.dump(notes, file)
     return render_template('notes.html', notebooks=notes, selected_notebook=sel_note, selected_chapter=sel_chap, chapters=chapters, selected_chapter_index=0)
 
+@app.route('/chapter_update', methods=['POST'])
+def update_chapter():
+    notes = load_notebooks()
+    # Get the data and other variables from the request
+    chapterTitle = request.form.get('data')
+    index = int(request.form.get('selected_chapter_index'))
+    selected_notebook = request.form.get('selected_notebook')
+    selected_chapter = request.form.get('selected_chapter')
+    chapters = []
+    for nb in notes:
+        if nb["title"] == selected_notebook:
+            chapters = nb["chapters"]
+    if 0 <= index < len(notes):
+        for nb in notes:
+            if nb["title"] == selected_notebook:
+                nb["chapters"][index]["title"] = chapterTitle
+                break
+    # Write the data to the JSON file
+    with open('notebooks.json', 'w') as file:
+        json.dump(notes, file)
+    return render_template('notes.html', notebooks=notes, selected_notebook=selected_notebook, selected_chapter=selected_chapter, selected_chapter_index=index, chapters=chapters)
+
 
 # Rest of the code...
 if __name__ == '__main__':
