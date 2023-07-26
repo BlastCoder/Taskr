@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Taskr</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ url_for('static', filename='w3.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='roboto.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif}
+.note-content {
+  color: inherit;
+}
+</style>
+</head>
+<body class="w3-light-grey">
+
+<header class="w3-container w3-red w3-center w3-margin-top">
+  <a href="{{ url_for('index') }}" class="w3-btn w3-red" style="font-size: 36px">Taskr</a>
+  <a href="/flash" class="w3-btn w3-red" style="font-size: 36px">Flashr</a>
+  <a href="/notes" class="w3-btn w3-red" style="font-size: 36px">Notes</a>
+  <br>
+  <div class="w3-container w3-padding">
+    <div class="w3-row">
+        <div class="w3-col m6 w3-center">
+            <a href="/view_flash" class="w3-btn w3-red"><i class="fa fa-plus"></i> View Flashcards</a>
+        </div>
+        <div class="w3-col m6 w3-center">
+            <a href="/quiz" class="w3-btn w3-red"><i class="fa fa-plus"></i> Quiz Mode</a>
+        </div>
+    </div>
+  </div>
+
+</header>
+
+<!-- Page Container -->
+<div class="w3-content w3-margin-top" style="max-width:1400px;">
+
+  <!-- The Grid -->
+  <div class="w3-row-padding">
+  
+    <!-- Left Column -->
+    <div class="w3-third">
+    
+      <div class="w3-white w3-text-grey w3-card-4">
+        
+        <div class="w3-container">
+            <h3 style="margin-top:10px">Filter</h3>
+        </div>
+      
+        <div class="w3-container w3-padding">
+          <h5><i class="fa-solid fa-magnifying-glass" style="margin-right:10px"></i>Filter Flashcards</h5>
+          <form action="/filter_flash" method="post">
+            <input type="text" name="filterf" placeholder="Filter flashcards" value="{{ filter_content }}">
+            <button class="w3-button w3-red w3-margin-top" type="submit" style="margin-left: 7px;">Filter</button>
+            <a href="/clear_flash_filter" class="w3-button w3-grey w3-margin-top">Clear Filter</a>
+          </form>
+        </div>
+
+        <div class="w3-container">
+          <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text-red"></i>Designer</p>
+          <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text-red"></i>London, UK</p>
+          <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text-red"></i>ex@mail.com</p>
+          <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text-red"></i>1224435534</p>
+          <hr>
+
+          <p class="w3-large"><b><i class="fa fa-tags fa-fw w3-margin-right w3-text-red"></i>Tag Percentage</b></p>
+          {% for tag, percentage in tag_percentages.items() %}
+          <p>{{ tag }}</p>
+          <div class="w3-light-grey w3-round-xlarge w3-small">
+            <div class="w3-container w3-center w3-round-xlarge w3-red" style="width:{{ percentage }}%">{{ percentage }}%</div>
+          </div>
+          <br>
+          {% endfor %}
+
+        </div>
+      </div><br>
+
+    <!-- End Left Column -->
+    </div>
+
+    <!-- Right Column -->
+    <div class="w3-twothird">
+    
+      <div class="w3-container w3-card w3-white w3-margin-bottom">
+        <h2 class="w3-text-grey w3-padding-16"><i class="fa-solid fa-note-sticky fa-fw w3-margin-right w3-xxlarge w3-text-red"></i>Flashcards</h2>
+        {% for note in notes %}
+        <div class="w3-container w3-card w3-white w3-margin-bottom" style="border-color: {{ note.color }};">
+          <h5 class="w3-opacity"><b>{{ note.title }}</b></h5>
+          {% if note.date %}
+          <h6 class="w3-text-teal"><i class="fa fa-calendar fa-fw w3-margin-right"></i>{{ note.date }}</h6>
+          {% endif %}
+          <p class="note-content" style="color: {{ note.color }};">{{ note.content }}</p>
+          {% if note.tags %}
+          <p>
+            {% for tag in note.tags.split(',') %}
+              <span class="w3-tag w3-light-grey w3-small w3-margin-bottom" style="background-color: {{ note.color }};">{{ tag.strip() }}</span>
+            {% endfor %}
+          </p>
+          {% endif %} 
+          <hr>
+        </div>
+        {% endfor %}
+      </div>
+
+    <!-- End Right Column -->
+    </div>
+    
+  <!-- End Grid -->
+  </div>
+  
+  <!-- End Page Container -->
+</div>
+
+<footer class="w3-container w3-teal w3-center w3-margin-top">
+</footer>
+
+<script>
+  // Get the toggle switch element
+  var editModeToggle = document.getElementById('editModeToggle');
+
+  // Add event listener for the toggle switch
+  editModeToggle.addEventListener('change', function() {
+    // Check if edit mode is on
+    if (editModeToggle.checked) {
+      // Redirect to the edit page
+      window.location.href = '/edit';
+    }
+  });
+</script>
+
+</body>
+</html>
